@@ -7,7 +7,7 @@ if __name__ == "__main__":
 
     for i in range(1000000):
         captcha, captcha_str = create_captcha(templates)
-        save_path = os.path.join(".", "dataset", "%s-%s.png" % (captcha_str, str(uuid.uuid4())))
+        save_path = os.path.join(".", "dataset", "%s-%s.jpg" % (captcha_str, str(uuid.uuid4())))
         with open(save_path, "wb") as f:
             captcha.save(f)
         print save_path

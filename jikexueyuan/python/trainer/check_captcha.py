@@ -9,9 +9,10 @@ from gen.utils import vec2str
 
 
 def check_dataset(dataset, labels, index):
-	data = np.uint8(dataset[index]).reshape((40, 100)) * 255
+	data = np.uint8(dataset[index]).reshape((50, 200)) * 255
 	im = Image.fromarray(data)
 	im.show()
+	# im.save("%s.jpg" % vec2str(labels[index]))
 	print("label:", vec2str(labels[index]))
 
 

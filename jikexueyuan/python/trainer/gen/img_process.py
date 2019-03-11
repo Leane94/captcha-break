@@ -1,4 +1,4 @@
-from PIL import Image
+from PIL import Image, ImageDraw
 import numpy as np
 
 
@@ -44,10 +44,75 @@ def cut(img):
     return Image.fromarray(np.uint8(img_arr[row[0]: row[1], col[0]: col[1]]))
 
 
+def getPixel(image, x, y):
+    L = image.getpixel((x, y))
+    if L == 0:
+        nearDots = 0
+        if inRange(image, x - 1, y - 1) and L - image.getpixel((x - 1, y - 1)):
+            nearDots += 1
+        if inRange(image, x - 1, y) and L - image.getpixel((x - 1, y)):
+            nearDots += 1
+        if inRange(image, x - 1, y + 1) and L - image.getpixel((x - 1, y + 1)):
+            nearDots += 1
+        if inRange(image, x, y - 1) and L - image.getpixel((x, y - 1)):
+            nearDots += 1
+        if inRange(image, x, y + 1) and L - image.getpixel((x, y + 1)):
+            nearDots += 1
+        if inRange(image, x + 1, y - 1) and L - image.getpixel((x + 1, y - 1)):
+            nearDots += 1
+        if inRange(image, x + 1, y) and L - image.getpixel((x + 1, y)):
+            nearDots += 1
+        if inRange(image, x + 1, y + 1) and L - image.getpixel((x + 1, y + 1)):
+            nearDots += 1
+        if nearDots >= 7:
+            return 1
+        elif nearDots == 6:
+            nearDots = 0
+            if inRange(image, x - 2, y - 2) and L - image.getpixel((x - 2, y - 2)):
+                nearDots += 1
+            if inRange(image, x - 2, y) and L - image.getpixel((x - 2, y)):
+                nearDots += 1
+            if inRange(image, x - 2, y + 2) and L - image.getpixel((x - 2, y + 2)):
+                nearDots += 1
+            if inRange(image, x, y - 2) and L - image.getpixel((x, y - 2)):
+                nearDots += 1
+            if inRange(image, x, y + 2) and L - image.getpixel((x, y + 2)):
+                nearDots += 1
+            if inRange(image, x + 2, y - 2) and L - image.getpixel((x + 2, y - 2)):
+                nearDots += 1
+            if inRange(image, x + 2, y) and L - image.getpixel((x + 2, y)):
+                nearDots += 1
+            if inRange(image, x + 2, y + 2) and L - image.getpixel((x + 2, y + 2)):
+                nearDots += 1
+            if nearDots >= 7:
+                return 1
+            else:
+                return 0
+    else:
+        return 1
+
+
+def inRange(image, x, y):
+    if x >= image.size[0] or y >= image.size[1]:
+        return False
+    else:
+        return True
+
+
+def clearNoise(image):
+    draw = ImageDraw.Draw(image)
+    for x in range(0, image.size[0]):
+        for y in range(0, image.size[1]):
+            color = getPixel(image, x, y)
+            draw.point((x, y), color)
+
+
 def rotate_and_cut(im, degree):
     im = rotate(im, degree)
     im = cut(im)
-
+    im.convert("L")
+    im = im.point(lambda x: 0 if x < 130 else x >= 130, '1')
+    clearNoise(im)
     im = im.convert("RGBA")
     datas = im.getdata()
     newData = list()

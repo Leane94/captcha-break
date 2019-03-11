@@ -16,7 +16,7 @@ graph_log_dir = os.path.join(trainer_dir, 'logs')
 
 
 def show_im(dataset):
-    data = np.uint8(dataset[0]).reshape((40, 100)) * 255
+    data = np.uint8(dataset[0]).reshape((50, 200)) * 255
     im = Image.fromarray(data)
     im.show()
 
